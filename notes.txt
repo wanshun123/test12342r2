@@ -1,0 +1,64 @@
+https://www.alexkras.com/transcribing-audio-file-to-text-with-google-cloud-speech-api-and-python/
+
+sudo wget https://github.com/Noonlord/YouTube-WAV-Downloader/archive/master.zip
+# and change directory files are saved to
+sudo apt-get install -y libav-tools
+python2 YouTube_to_WAV.py https://www.youtube.com/watch?v=KfVdIKaQzW8
+
+# split into parts
+ffmpeg -i 'Trump on 9_11 - America will never ever submit to tyranny-oq3pmorPZNw-2.wav' -f segment -segment_time 56 -c copy /home/ubuntu/yt/yt/data/split/out%03d-4.wav
+
+sudo pip3 install -r requirements.txt
+
+sudo python3 fast2.py
+
+---
+
+# get duration
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
+# split into parts
+ffmpeg -i 'President Trump Participates in the Arab Islamic American Summit Riyadh-McRUrljoIn0.wav' -f segment -segment_time 50 -c copy /home/ubuntu/yt/yt/data/split/4-out%03d.wav
+
+# Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds) - # https://stackoverflow.com/questions/20295398/ffmpeg-clip-audio-interval-with-starting-and-end-time
+ffmpeg -i 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8.wav' -ss 15 -t 885 -acodec copy 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
+
+---
+
+# cut first 5 seconds
+ffmpeg -i input.mp3 -ss 00:00:05 -i /home/requiem/Desktop/t1.mp4 ....
+# if video was 40 seconds long and wanted to cut 7 seconds
+ffmpeg -i input.avi -t 33 -c copy output.avi
+# probe beginning and end fixed amounts
+https://superuser.com/questions/1151012/ffmpeg-trim-beginning-and-end-fixed-amounts
+# cut off 30 seconds (10 at start, 10 at end)
+ffmpeg -ss 15 -t 2074.935329 -i 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav' 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav'
+# cut off last 18 seconds?
+ffprobe -t $(( $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav' |cut -d\. -f1) - 15 ))
+
+---
+
+# to install google.cloud
+python3 -m pip install grpcio-tools opencensus google-cloud-trace
+# and google cloud speech
+pip install --upgrade google-cloud-speech
+
+# splits audio file into segments of 8 words each (clean) and outputs metadata.csv
+python test2.py '/home/ubuntu/yt/yt/data/President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
+# with test3.py
+python test3.py '/home/ubuntu/yt/yt/data/split/*.wav'
+
+export GOOGLE_APPLICATION_CREDENTIALS="/home/ubuntu/yt/yt/api-key.json"
+
+---
+
+https://www.youtube.com/watch?v=KfVdIKaQzW8 # trim last 15 seconds
+https://www.youtube.com/watch?v=oq3pmorPZNw # trim last 10 seconds
+https://www.youtube.com/watch?v=UkEb888Uit8 # trim first 15 seconds, last 10 seconds
+https://www.youtube.com/watch?v=McRUrljoIn0
+
+---
+
+- download wav of youtube videos and cut
+- run transcription and cut wav files
+- run test2.py on wav files
+- preprocess
