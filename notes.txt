@@ -3,7 +3,9 @@ https://www.alexkras.com/transcribing-audio-file-to-text-with-google-cloud-speec
 sudo wget https://github.com/Noonlord/YouTube-WAV-Downloader/archive/master.zip
 # and change directory files are saved to
 sudo apt-get install -y libav-tools
-python2 YouTube_to_WAV.py https://www.youtube.com/watch?v=KfVdIKaQzW8
+pip install youtube-dl
+change line to os.system("youtube-dl --extract-audio --audio-format wav " + link)
+python2 YouTube_to_WAV.py https://www.youtube.com/watch?v=5hMK_sHchak
 
 # split into parts
 ffmpeg -i 'Trump on 9_11 - America will never ever submit to tyranny-oq3pmorPZNw-2.wav' -f segment -segment_time 56 -c copy /home/ubuntu/yt/yt/data/split/out%03d-4.wav
@@ -15,9 +17,9 @@ sudo python3 fast2.py
 ---
 
 # get duration
-ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav'
 # split into parts
-ffmpeg -i 'President Trump Participates in the Arab Islamic American Summit Riyadh-McRUrljoIn0.wav' -f segment -segment_time 50 -c copy /home/ubuntu/yt/yt/data/split/4-out%03d.wav
+ffmpeg -i 'The Audacity of Hope Audiobooks-5hMK_sHchak.wav' -f segment -segment_time 45 -c copy /home/paperspace/gsttaco/gst-tacotron-master/obama/data/wavs/4-out%03d.wav
 
 # Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds) - # https://stackoverflow.com/questions/20295398/ffmpeg-clip-audio-interval-with-starting-and-end-time
 ffmpeg -i 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8.wav' -ss 15 -t 885 -acodec copy 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
@@ -30,7 +32,7 @@ ffmpeg -i input.mp3 -ss 00:00:05 -i /home/requiem/Desktop/t1.mp4 ....
 ffmpeg -i input.avi -t 33 -c copy output.avi
 # probe beginning and end fixed amounts
 https://superuser.com/questions/1151012/ffmpeg-trim-beginning-and-end-fixed-amounts
-# cut off 30 seconds (10 at start, 10 at end)
+# cut off 30 seconds (15 at start, 15 at end)
 ffmpeg -ss 15 -t 2074.935329 -i 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav' 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav'
 # cut off last 18 seconds?
 ffprobe -t $(( $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump addresses U.N. General Assembly - FULL SPEECH (C-SPAN)-KfVdIKaQzW8.wav' |cut -d\. -f1) - 15 ))
@@ -47,18 +49,48 @@ python test2.py '/home/ubuntu/yt/yt/data/President Trump marks the anniversary o
 # with test3.py
 python test3.py '/home/ubuntu/yt/yt/data/split/*.wav'
 
-export GOOGLE_APPLICATION_CREDENTIALS="/home/ubuntu/yt/yt/api-key.json"
+python test4.py '/home/ubuntu/yt/yt/data/split/*.wav'
+python test4.py '/home/ubuntu/yt/yt/data/cut/wavs/*.wav'
+python test6p.py '/home/paperspace/gsttaco/gst-tacotron-master/obama/data/split/*.wav' 8
+
+export GOOGLE_APPLICATION_CREDENTIALS="/home/paperspace/gsttaco/gst-tacotron-master/obama/api-key.json"
+export GOOGLE_APPLICATION_CREDENTIALS="X:\python\deepfake\audio-to-text"
 
 ---
 
 https://www.youtube.com/watch?v=KfVdIKaQzW8 # trim last 15 seconds
 https://www.youtube.com/watch?v=oq3pmorPZNw # trim last 10 seconds
-https://www.youtube.com/watch?v=UkEb888Uit8 # trim first 15 seconds, last 10 seconds
+https://www.youtube.com/watch?v=UkEb888Uit8 # trim first 15 seconds, last 10 seconds # probably best
 https://www.youtube.com/watch?v=McRUrljoIn0
 
 ---
 
-- download wav of youtube videos and cut
-- run transcription and cut wav files
+- download wav of youtube video
+python2 YouTube_to_WAV.py https://www.youtube.com/watch?v=McRUrljoIn0
+- get duration 
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8.wav'
+- trim 
+ffmpeg -ss 15 -t 880.217125 -i 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8.wav' 'President Trump marks the anniversary of the 9_11 attacks-UkEb888Uit8-2.wav'
+- cut wav files into parts
+ffmpeg -i 'Trump on 9_11 - America will never ever submit to tyranny-oq3pmorPZNw-2.wav' -f segment -segment_time 15 -c copy /home/paperspace/trump/split/outd-%03d.wav
 - run test2.py on wav files
-- preprocess
+python test7p-simpler.py '/home/paperspace/trump/split/*.wav'
+python test7p-simpler.py '/home/paperspace/dctts/dctts/obama/wavs/*.wav'
+- python preprocess.py --dataset ljspeech
+- train off nancy? /home/ubuntu/yt/yt/data/cut nohup python3 train.py --restore_step 1 --hparams="max_iters=400"
+
+python test.py /home/ubuntu/yt/yt/data/cut/wavs/output535.wav
+
+---
+
+quxjehShH5zg
+
+youtube-dl --all-subs 'https://www.youtube.com/watch?v=F6_U6rdjbmI'
+
+/home/paperspace/gsttaco/gst-tacotron-master/obama/data
+/home/paperspace/gsttaco/2/3/tacotron-master
+python3 preprocess.py --dataset ljspeech
+nohup python3 train.py --restore_step 1
+python3 eval.py --checkpoint '/home/paperspace/gsttaco/logs-tacotron/model.ckpt-127000'
+
+model saved in /home/paperspace/gsttaco/logs-tacotron
