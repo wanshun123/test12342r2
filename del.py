@@ -3,13 +3,23 @@ import re
 import os
 
 #youtube-dl --sub-lang en --skip-download --write-sub --output '~/obamanet/data/captionstest/%(autonumber)s.%(ext)s' --batch-file ~/obamanet/data/obama_addresses1.txt --ignore-config
-youtube-dl --sub-lang en --skip-download --write-sub --output '~/obamanet/data/captionstest/%(autonumber)s.%(ext)s' --batch-file ~/obamanet/data/obama_addresses1.txt --ignore-config
+youtube-dl --sub-lang en --write-sub --output '~/obamanet/data/captionstest/%(autonumber)s.%(ext)s' --batch-file ~/obamanet/data/obama_addresses1.txt --ignore-config --extract-audio --audio-format wav --audio-quality 192K
 
-ren *.vtt *.txt
+rename 's/.en.vtt$/.txt/' *.en.vtt
 
-files = glob.glob('~/obamanet/data/captionstest/*.txt')
+#python2 YouTube_to_WAV3.py https://www.youtube.com/watch?v=u2ZynkD3N_k
 
-os.system("some_command with args")
+transcription_files = glob.glob('/home/paperspace/obamanet/data/captionstest/*.txt')
+wav_files = glob.glob('/home/paperspace/obamanet/data/captionstest/*.wav')
+
+for file in wav_files:
+    name = file.split('/')[-1]
+    os.system('ffmpeg -i ' + name + ' -ar 22050 ' + 'n' + name)
+    ffmpeg -i /home/paperspace/obamanet/data/captionstest/00002.wav -ar 22050 /home/paperspace/obamanet/data/captionstest/new.wav
+
+rm 00002.wav
+
+#os.system("some_command with args")
 
 for file in files:
     os.system('ffmpeg -i ' + file + ' -ar 22050 ' + 'n' + file)
