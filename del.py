@@ -1,6 +1,7 @@
 import glob
 import re
 import os
+import csv
 
 os.system('youtube-dl --sub-lang en --write-sub --output \'~/obamanet/data/captionstest/%(autonumber)s.%(ext)s\' --batch-file ~/obamanet/data/obama_addresses1.txt --ignore-config --extract-audio --audio-format wav --audio-quality 192K')
 
@@ -14,10 +15,10 @@ for file in wav_files:
     os.system('ffmpeg -i ' + name + ' -ar 22050 -ac 1 ' + 'n' + name) # issues with size being very low if overwriting for some reason
     os.system('rm ' + name)
 
-count = 0
-print_strings = []
+filenames_and_text = []
 
 for file in transcription_files:
+    count = 0
     file_open = open(file, mode='r')
     text = file_open.read()
     file_open.close()
@@ -52,28 +53,30 @@ for file in transcription_files:
     wav_file = file.split('/')[-1]
     wav_file = 'n' + wav_file.split('.')[0] + '.wav'
     for i in range(len(transcriptions)):
-        os.system('ffmpeg -i ' + wav_file + ' -ss ' + str(starts[i]) + ' -t ' + str(lengths[i]) + ' -c:v copy -c:a copy s' + str(count) + '.wav')
-        print('ffmpeg -i ' + wav_file + ' -ss ' + str(starts[i]) + ' -t ' + str(lengths[i]) + ' -c:v copy -c:a copy s' + str(count) + '.wav')
-        print_strings.append('ffmpeg -i ' + wav_file + ' -ss ' + str(starts[i]) + ' -t ' + str(lengths[i]) + ' -c:v copy -c:a copy s' + str(count) + '.wav')
+        os.system('ffmpeg -i ' + wav_file + ' -ss ' + str(starts[i]) + ' -t ' + str(lengths[i]) + ' -c:v copy -c:a copy /home/paperspace/obamanet/data/wavs/s' + wav_file[1:6] + '-' + str(count) + '.wav')
+        filenames_and_text.append('s' + wav_file[1:6] + '-' + str(count) + '.wav|' + transcriptions[i] + '|' + transcriptions[i])
         count += 1
-    print(wav_file)
-    print(text)
-    print(file)
-    print(transcriptions)
-    print(print_strings)
-            with open('metadata-test.csv', 'w', newline='') as f:
-            writer = csv.writer(f)
-            for val in filenames_and_text:
-                writer.writerow([val])
 
-    '''
-    wav_files = glob.glob('/home/paperspace/obamanet/data/captionstest/*.wav')
-    print(wav_files)
-    for i in range(len(wav_files)):
-        os.system('ffmpeg -i ' + wav_files[i] + ' -ss ' + str(starts[i]) + ' -t ' + str(lengths[i]) + ' -c:v copy -c:a copy s' + str(count) + '.wav')
-        count += 1
-    '''
+with open('metadata-test.csv', 'w', newline='') as f:
+    writer = csv.writer(f)
+    for val in filenames_and_text:
+        writer.writerow([val])
 
-        
+# delete original, full audio files and transcriptions (only need the metadata.csv)
+wav_files = glob.glob('/home/paperspace/obamanet/data/captionstest/*.wav')
+for file in wav_files:
+    os.system('rm ' + file)
+for file in transcription_files:
+    os.system('rm ' + file)
+
+'''
+wav_files = glob.glob('/home/paperspace/obamanet/data/captionstest/*.wav')
+for file in wav_files:
+    os.system('ffmpeg -i ' + file + ' -af silenceremove=1:0.5:-35dB ' + file)
+'''
+    
+#ffmpeg -i /home/paperspace/obamanet/data/captionstest/s00001-6.wav -af silenceremove=1:0.3:-45dB /home/paperspace/obamanet/data/captionstest/ss00001-6.wav
+#ffmpeg-normalize /home/paperspace/obamanet/data/captionstest/s00001-6.wav -o /home/paperspace/obamanet/data/captionstest/sss00001-6.wav -c:a aac -b:a 192k
+
 #ffmpeg -i obama-voice.wav -ss 00:00:05 -t 00:00:01.234 -c:v copy -c:a copy testdf.wav
-ffmpeg -i obama-voice.wav -ss 00:00:05 -t 1.234 -c:v copy -c:a copy testdf.wav
+#ffmpeg -i n00001.wav -ss 00:00:10.543 -t 2.036 -c:v copy -c:a copy testdf.wav
